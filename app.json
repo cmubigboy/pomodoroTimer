@@ -1,10 +1,10 @@
 {
   "expo": {
     "name": "project1",
-    "description": "This project is really great.",
+    "description": "A Pomodoro Timer that provides a 25 minute timer for working, then 5 minutes for resting, cycling between the two.",
     "slug": "project1",
     "privacy": "public",
-    "sdkVersion": "25.0.0",
+    "sdkVersion": "35.0.0",
     "platforms": ["ios", "android"],
     "version": "1.0.0",
     "orientation": "portrait",
