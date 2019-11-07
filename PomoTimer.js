@@ -2,18 +2,15 @@ import React from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 import Constants from 'expo-constants';
 
-import PomoTimer from './PomoTimer'
+import TimerInput from './TimerInput.js'
 
-export default class App extends React.Component {
+export default class PomoTimer extends React.Component {
   render() {
     return (
-      <View style={styles.container}>
-        <Text style={styles.title}><Text style={styles.red}>Pomodoro</Text> Timer</Text>
-        <View style={styles.elementsContainer}>
-          <PomoTimer />
-          <PomoTimer />
-          <PomoTimer />
-        </View>
+      <View style={styles.elementsContainer}>
+        <Text style={styles.display}>24:59</Text>
+        <TimerInput name="Work Time" minutes="25" seconds="0"/>
+        <TimerInput name="Break Time" minutes="5" seconds="0"/>
       </View>
     );
   }
@@ -25,11 +22,7 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   elementsContainer: {
-    flex: 1,
     alignItems: 'center',
-    backgroundColor: '#ecf5fd',
-    margin: 20,
-    paddingTop: 20,
   },
   display: { textAlign: 'center', fontSize: 48, fontFamily: "Verdana" },
   red: { color: 'red' },
