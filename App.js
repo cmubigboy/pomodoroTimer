@@ -10,7 +10,7 @@ export default class App extends React.Component {
       <View style={styles.container}>
         <Text style={styles.title}><Text style={styles.red}>Pomodoro</Text> Timer</Text>
         <View style={styles.elementsContainer}>
-          <PomoTimer />
+          <PomoTimer workMin="24" workSec="2" breakMin="3" breakSec="2"/>
           <PomoTimer />
           <PomoTimer />
         </View>
