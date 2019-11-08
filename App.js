@@ -1,6 +1,7 @@
 import React from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 import Constants from 'expo-constants';
+import {vibrate} from './utils';
 
 import PomoTimer from './PomoTimer'
 
@@ -10,9 +11,9 @@ export default class App extends React.Component {
       <View style={styles.container}>
         <Text style={styles.title}><Text style={styles.red}>Pomodoro</Text> Timer</Text>
         <View style={styles.elementsContainer}>
-          <PomoTimer workMin="24" workSec="2" breakMin="3" breakSec="2"/>
-          <PomoTimer />
-          <PomoTimer />
+          <PomoTimer workMin="0" workSec="5" breakMin="0" breakSec="5"/>
+          {/* <PomoTimer />
+          <PomoTimer /> */}
         </View>
       </View>
     );
