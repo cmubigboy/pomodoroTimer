@@ -11,8 +11,9 @@ export default class App extends React.Component {
       <View style={styles.container}>
         <Text style={styles.title}><Text style={styles.red}>Pomodoro</Text> Timer</Text>
         <View style={styles.elementsContainer}>
-          <PomoTimer workMin="0" workSec="5" breakMin="0" breakSec="5"/>
-          {/* <PomoTimer />
+          <PomoTimer />
+          {/* <PomoTimer workMin="0" workSec="5" breakMin="0" breakSec="5"/>
+          <PomoTimer />
           <PomoTimer /> */}
         </View>
       </View>
@@ -28,7 +29,7 @@ const styles = StyleSheet.create({
   elementsContainer: {
     flex: 1,
     alignItems: 'center',
-    backgroundColor: '#ecf5fd',
+    backgroundColor: '#fff',
     margin: 20,
     paddingTop: 20,
   },

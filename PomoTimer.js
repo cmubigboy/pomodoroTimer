@@ -1,13 +1,16 @@
 import React from 'react';
 import { Button, StyleSheet, Text, TextInput, View } from 'react-native';
-import Constants from 'expo-constants';
+import PropTypes from 'prop-types'
 
-import TimerInput from './TimerInput.js'
 import vibrate from './utils/vibrate.js';
 
 const isEmpty = (val) => (val === undefined | val === null)
 
 export default class PomoTimer extends React.Component {
+  static propTypes = {
+    workMin:  PropTypes.string, workSec:  PropTypes.string,
+    breakMin: PropTypes.string, breakSec: PropTypes.string,
+  }
   constructor(props) {
     super(props)
     this.state = {
@@ -25,11 +28,11 @@ export default class PomoTimer extends React.Component {
     console.log("work="+this.state.workMin+":"+(this.state.workSec<10?'0':'')+this.state.workSec)
     console.log("break="+this.state.breakMin+":"+(this.state.breakSec<10?'0':'')+this.state.breakSec)
 
-    this.setState({
-      counter: 60 * this.state.workMin + 1 * this.state.workSec,
+    this.setState((prevState, props) => ({
+      counter: 60 * prevState.workMin + 1 * prevState.workSec,
       timerActive: true,
       timerForWork: true,
-    })
+    }))
     this.interval = setInterval(this.dec, 1000);
   }
 
@@ -53,14 +56,32 @@ export default class PomoTimer extends React.Component {
       })) 
     }
   }
+
   toggleTimer = () => {
      console.log("toggleTimer")
-     this.setState({timerActive: !this.state.timerActive})
+     this.setState((prevState) => ({timerActive: !prevState.timerActive}))
      if (this.state.timerActive) {
       clearInterval(this.interval)
      } else {
        this.interval = setInterval(this.dec, 1000)
      }
+  }
+
+  updateWorkMin = (min) => {
+    this.setState( { workMin: min } )
+    if (this.state.timerForWork) this.resetTimer();
+  }
+  updateWorkSec = (sec) => {
+    this.setState( { workSec: sec } )
+    if (this.state.timerForWork) this.resetTimer();
+  }
+  updateBreakMin = (min) => {
+    this.setState( { breakMin: min } )
+    if (!this.state.timerForWork) this.resetTimer();
+  }
+  updateBreakSec = (sec) => {
+    this.setState( { breakSec: sec } )
+    if (!this.state.timerForWork) this.resetTimer();
   }
 
   handleNewValue = () => {
@@ -71,33 +92,39 @@ export default class PomoTimer extends React.Component {
   resetTimer = () => {
     console.log("resetTimer")
     clearInterval(this.interval)
-    this.setState({
+    this.setState((prevState) => ({
       timerActive: false,
-      timerForWork: true,
-      counter: (this.state.workMin * 60) + (this.state.workSec * 1),
-    })
+      //timerForWork: true,
+      // counter: (this.state.workMin * 60) + (this.state.workSec * 1), // WRONG WAY
+      counter: (prevState.workMin * 60) + (prevState.workSec * 1),
+    }))
+
+    const min = Math.floor(this.state.counter / 60)
+    const sec = "" + (this.state.counter % 60 < 10 ? "0" : "") + (this.state.counter % 60)
+    console.log(min + ":" + sec + " workTime: " + this.state.workMin + ":" + this.state.workSec)
    }
 
   render() {
     return (
-      <View style={styles.elementsContainer}>
+      <View style={styles.container}>
         <Text style={styles.displayName}>{this.state.timerForWork?"Work Timer":"Break Timer"}</Text>
         <Text style={styles.displayTime}>{Math.floor(this.state.counter / 60)}:
           {this.state.counter % 60 < 10 ? "0" : ""}{this.state.counter % 60}</Text>
         <View style={styles.row}>
-          <Button style={styles.flex1} title={this.state.timerActive?"PAUSE":"START"} onPress={this.toggleTimer}/>
-          <Button style={styles.flex1} title="RESET" onPress={this.resetTimer} />
+          <Button style={styles.button} title={this.state.timerActive?"Pause":"Start"} onPress={this.toggleTimer}/>
+          <Button style={styles.button} title="Reset" onPress={this.resetTimer} />
         </View>
         <View style={styles.inputContainer}>
-          <Text style={styles.timerLabel}>Work Time</Text>
-          <Text style={styles.timeLabel}>Mins:</Text>
+          <Text style={styles.rowLabel}>Work Time</Text>
+          <Text style={styles.timeLabel}>Mins: </Text>
           <TextInput
           style={styles.inputs}
           keyboardType='numeric'
-          onChangeText={minutes => { this.setState({ workMin: minutes }); this.handleNewValue(); }}
+          // onChangeText={minutes => { this.setState({ workMin: minutes }); this.handleNewValue(); }}
+          onChangeText = { minutes => this.updateWorkMin(minutes) }
           value={this.state.workMin}
           />
-          <Text style={styles.timeLabel}>Secs:</Text>
+          <Text style={styles.timeLabel}>Secs: </Text>
           <TextInput
           style={styles.inputs}
           keyboardType='number-pad'
@@ -106,15 +133,15 @@ export default class PomoTimer extends React.Component {
           />
         </View>
         <View style={styles.inputContainer}>
-          <Text style={styles.timerLabel}>Break Time</Text>
-          <Text style={styles.timeLabel}>Mins:</Text>
+          <Text style={styles.rowLabel}>Break Time</Text>
+          <Text style={styles.timeLabel}>Mins: </Text>
           <TextInput
           style={styles.inputs}
           keyboardType='numeric'
           onChangeText={minutes => { this.setState({ breakMin: minutes }); this.handleNewValue(); }}
           value={this.state.breakMin}
           />
-          <Text style={styles.timeLabel}>Secs:</Text>
+          <Text style={styles.timeLabel}>Secs: </Text>
           <TextInput
           style={styles.inputs}
           keyboardType='number-pad'
@@ -122,40 +149,27 @@ export default class PomoTimer extends React.Component {
           value={this.state.breakSec}
           />
         </View>
-        {/* <TimerInput name="Work Time" minutes={this.state.workMin} seconds={this.state.workSec}/>
-        <TimerInput name="Break Time" minutes={this.state.breakMin} seconds={this.state.breakSec}/> */}
-        <View>
-            <View style={styles.row}>
-              <Text>counter: {this.state.counter}</Text>
-              <Text>active: {this.state.timerActive?"Active":"Paused"}</Text>
-            </View>
-            <View style={styles.row, styles.padding10}>
-              <Text style={styles.flex1 , styles.red}>workMin: {this.state.workMin}</Text>
-              <Text style={styles.flex1}>workSec: {this.state.workSec}</Text>
-            </View>
-          </View>
       </View>
     );
   }
 }
 
 const styles = StyleSheet.create({
-  container: { marginTop: Constants.statusBarHeight, flex: 1, },
-  displayName: { textAlign: 'center', fontSize: 48, fontFamily: "Verdana", fontWeight: 'bold' },
-  displayTime: { textAlign: 'center', fontSize: 48, fontFamily: "Verdana" },
-  elementsContainer: { alignItems: 'center', },
+  button: { flex: 1, padding: 10, },
+  displayName: { textAlign: 'center', fontSize: 44, fontFamily: "Verdana", fontWeight: 'bold' },
+  displayTime: { textAlign: 'center', fontSize: 64, fontFamily: "Verdana" },
+  container: { alignItems: 'center', flex: 1, },
   flex1: { flex: 1 },
   inputContainer: {
     alignItems: 'flex-start',
     flexDirection: 'row',
     justifyContent: 'space-evenly',
-    paddingHorizontal: 10,
+    padding: 4,
   },
-  inputs:    { flex: 3, fontSize: 18, fontFamily: "Courier", borderColor: 'gray', borderWidth: 1 },
-  padding10: { paddingHorizontal: 10 },
-  rowLabel:  { flex: 3, fontSize: 14, fontFamily: "Verdana", fontWeight: 'bold' },
+  inputs:    { flex: 1, padding: 4, fontSize: 18, fontFamily: "Courier", borderColor: 'gray', borderWidth: 1 },
+  rowLabel:  { flex: 2, padding: 4, fontSize: 14, fontFamily: "Verdana", fontWeight: 'bold' },
   red: { color: 'red' },
-  row: { flexDirection: 'row' },
-  timeLabel: { flex: 1, fontSize: 12, fontFamily: "Verdana", },
+  row: { flexDirection: 'row', justifyContent: 'space-between' },
+  timeLabel: { flex: 1, textAlign: 'center', fontSize: 12, fontFamily: "Verdana", },
   title: { textAlign: 'center', fontSize: 24, fontFamily: "Verdana"}
 });
