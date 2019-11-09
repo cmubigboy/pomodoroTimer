@@ -25,8 +25,8 @@ export default class PomoTimer extends React.Component {
   }
 
   componentDidMount (prevProps, prevState) {
-    console.log("work="+this.state.workMin+":"+(this.state.workSec<10?'0':'')+this.state.workSec)
-    console.log("break="+this.state.breakMin+":"+(this.state.breakSec<10?'0':'')+this.state.breakSec)
+    //console.log("work="+this.state.workMin+":"+(this.state.workSec<10?'0':'')+this.state.workSec)
+    //console.log("break="+this.state.breakMin+":"+(this.state.breakSec<10?'0':'')+this.state.breakSec)
 
     this.setState((prevState, props) => ({
       counter: 60 * prevState.workMin + 1 * prevState.workSec,
@@ -41,7 +41,7 @@ export default class PomoTimer extends React.Component {
   }
 
   dec = () => {
-    console.log("decrementing...",this.state.counter)
+    //console.log("decrementing...",this.state.counter)
     if (this.state.counter <= 1) {
       this.setState(prevState => ({
         timerForWork: !prevState.timerForWork,
@@ -58,7 +58,7 @@ export default class PomoTimer extends React.Component {
   }
 
   toggleTimer = () => {
-     console.log("toggleTimer")
+     //console.log("toggleTimer")
      this.setState((prevState) => ({timerActive: !prevState.timerActive}))
      if (this.state.timerActive) {
       clearInterval(this.interval)
@@ -84,24 +84,18 @@ export default class PomoTimer extends React.Component {
     if (!this.state.timerForWork) this.resetTimer();
   }
 
-  handleNewValue = () => {
-    console.log("handleNewValue")
-    this.resetTimer()
-  }
-
   resetTimer = () => {
-    console.log("resetTimer")
+    //console.log("resetTimer")
     clearInterval(this.interval)
     this.setState((prevState) => ({
       timerActive: false,
-      //timerForWork: true,
+      //timerForWork: true, // removed so it doesn't reset always back to work timer
       // counter: (this.state.workMin * 60) + (this.state.workSec * 1), // WRONG WAY
       counter: (prevState.workMin * 60) + (prevState.workSec * 1),
     }))
 
     const min = Math.floor(this.state.counter / 60)
     const sec = "" + (this.state.counter % 60 < 10 ? "0" : "") + (this.state.counter % 60)
-    console.log(min + ":" + sec + " workTime: " + this.state.workMin + ":" + this.state.workSec)
    }
 
   render() {
@@ -120,7 +114,6 @@ export default class PomoTimer extends React.Component {
           <TextInput
           style={styles.inputs}
           keyboardType='numeric'
-          // onChangeText={minutes => { this.setState({ workMin: minutes }); this.handleNewValue(); }}
           onChangeText = { minutes => this.updateWorkMin(minutes) }
           value={this.state.workMin}
           />
@@ -128,7 +121,7 @@ export default class PomoTimer extends React.Component {
           <TextInput
           style={styles.inputs}
           keyboardType='number-pad'
-          onChangeText={seconds => { this.setState({ workSec: seconds }); this.handleNewValue(); }}
+          onChangeText = { seconds => this.updateWorkSec(seconds) }
           value={this.state.workSec}
           />
         </View>
@@ -138,14 +131,14 @@ export default class PomoTimer extends React.Component {
           <TextInput
           style={styles.inputs}
           keyboardType='numeric'
-          onChangeText={minutes => { this.setState({ breakMin: minutes }); this.handleNewValue(); }}
+          onChangeText = { minutes => this.updateBreakMin(minutes) }
           value={this.state.breakMin}
           />
           <Text style={styles.timeLabel}>Secs: </Text>
           <TextInput
           style={styles.inputs}
           keyboardType='number-pad'
-          onChangeText={seconds => { this.setState({ breakSec: seconds }); this.handleNewValue(); }}
+          onChangeText = { seconds => this.updateBreakSec(seconds) }
           value={this.state.breakSec}
           />
         </View>
