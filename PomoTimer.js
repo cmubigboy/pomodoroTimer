@@ -4,7 +4,9 @@ import PropTypes from 'prop-types'
 
 import vibrate from './utils/vibrate.js';
 
-const isEmpty = (val) => (val === undefined | val === null)
+const isEmpty = (val) => (val === undefined | val === null | val === "" )
+const isValidMin = (min) => !(isNaN(min) || min<0)
+const isValidSec = (sec) => !(isNaN(sec) || sec>59 || sec<0)
 
 export default class PomoTimer extends React.Component {
   static propTypes = {
@@ -27,7 +29,6 @@ export default class PomoTimer extends React.Component {
   componentDidMount (prevProps, prevState) {
     //console.log("work="+this.state.workMin+":"+(this.state.workSec<10?'0':'')+this.state.workSec)
     //console.log("break="+this.state.breakMin+":"+(this.state.breakSec<10?'0':'')+this.state.breakSec)
-
     this.setState((prevState, props) => ({
       counter: 60 * prevState.workMin + 1 * prevState.workSec,
       timerActive: true,
@@ -68,20 +69,24 @@ export default class PomoTimer extends React.Component {
   }
 
   updateWorkMin = (min) => {
-    this.setState( { workMin: min } )
-    if (this.state.timerForWork) this.resetTimer();
+    //this.setState( state => ({ workMin: isNaN(min) || min<0 ? state.workMin : (1 * min + "") }) )
+    this.setState( state => ({ workMin: isValidMin(min) ? (1 * min + "") : state.workMin }) )
+    if (this.state.timerForWork) this.resetTimer()
   }
   updateWorkSec = (sec) => {
-    this.setState( { workSec: sec } )
-    if (this.state.timerForWork) this.resetTimer();
+    //this.setState( state => ({ workSec: isNaN(sec) || sec>59 || sec<0 ? state.workSec : (1 * sec + "") }) )
+    this.setState( state => ({ workSec: isValidSec(sec) ? (1 * sec + "") : state.workSec }) )
+    if (this.state.timerForWork) this.resetTimer()
   }
   updateBreakMin = (min) => {
-    this.setState( { breakMin: min } )
-    if (!this.state.timerForWork) this.resetTimer();
+    //this.setState(state => ({ breakMin: isNaN(min) || min<0 ? state.breakMin : (1 * min + "") }) )
+    this.setState( state => ({ breakMin: isValidMin(min) ? (1 * min + "") : state.breakMin }) )
+    if (!this.state.timerForWork) this.resetTimer()
   }
   updateBreakSec = (sec) => {
-    this.setState( { breakSec: sec } )
-    if (!this.state.timerForWork) this.resetTimer();
+    //this.setState(state => ({ breakSec: isNaN(sec) || sec>59 || sec<0 ? state.breakSec : (1 * sec + "") }) )
+    this.setState(state => ({ breakSec: isValidSec(sec) ? (1 * sec + "") : state.breakSec }) )
+    if (!this.state.timerForWork) this.resetTimer()
   }
 
   resetTimer = () => {
@@ -91,7 +96,9 @@ export default class PomoTimer extends React.Component {
       timerActive: false,
       //timerForWork: true, // removed so it doesn't reset always back to work timer
       // counter: (this.state.workMin * 60) + (this.state.workSec * 1), // WRONG WAY
-      counter: (prevState.workMin * 60) + (prevState.workSec * 1),
+      counter: prevState.timerForWork ? 
+               (60 * prevState.workMin + 1 * prevState.workSec) :
+               (60 * prevState.breakMin + 1 * prevState.breakSec),
     }))
 
     const min = Math.floor(this.state.counter / 60)
