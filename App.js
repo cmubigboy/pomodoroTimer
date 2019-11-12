@@ -13,7 +13,6 @@ export default class App extends React.Component {
         <View style={styles.elementsContainer}>
           <PomoTimer />
           {/* <PomoTimer workMin="0" workSec="5" breakMin="0" breakSec="5"/>
-          <PomoTimer />
           <PomoTimer /> */}
         </View>
       </View>
@@ -31,7 +30,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     backgroundColor: '#fff',
     margin: 20,
-    paddingTop: 20,
+    paddingTop: 0,
   },
   display: { textAlign: 'center', fontSize: 48, fontFamily: "Verdana" },
   red: { color: 'red' },

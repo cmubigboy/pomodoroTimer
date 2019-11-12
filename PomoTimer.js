@@ -4,7 +4,7 @@ import PropTypes from 'prop-types'
 
 import vibrate from './utils/vibrate.js';
 
-const isEmpty = (val) => (val === undefined | val === null | val === "" )
+const isEmpty = (val) => (val === undefined || val === null || val === "" )
 const isValidMin = (min) => !(isNaN(min) || min<0)
 const isValidSec = (sec) => !(isNaN(sec) || sec>59 || sec<0)
 
@@ -106,7 +106,7 @@ export default class PomoTimer extends React.Component {
           <Text style={styles.timeLabel}>Mins: </Text>
           <TextInput
           style={styles.inputs}
-          keyboardType='numeric'
+          keyboardType='number-pad'
           onChangeText = { minutes => this.updateWorkMin(minutes) }
           value={this.state.workMin}
           />
@@ -123,7 +123,7 @@ export default class PomoTimer extends React.Component {
           <Text style={styles.timeLabel}>Mins: </Text>
           <TextInput
           style={styles.inputs}
-          keyboardType='numeric'
+          keyboardType='number-pad'
           onChangeText = { minutes => this.updateBreakMin(minutes) }
           value={this.state.breakMin}
           />
